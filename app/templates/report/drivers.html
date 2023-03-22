@@ -1,0 +1,13 @@
+{% block title %}Drivers:{% endblock %}
+{% block main %}
+<ol>
+  <table>
+{% for driver in drivers %}
+    <tr>
+      <td><a href="{{ url_for('print_driver', driver_id=driver[0]) }}">{{ driver[0] }}</a></td>
+      <td>{{ driver[1] }}</td>
+    </tr>
+{% endfor %}
+  </table>
+</ol>
+{% endblock %}
