@@ -1,0 +1,22 @@
+summary: Get a list of drivers and team names
+description: This endpoint returns a list of racers containing abbreviation and name.
+tags:
+  - Drivers Report
+produces:
+  - application/json
+responses:
+  200:
+    description: A list of racers
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          abbr:
+            type: string
+            description: Racer abbreviation
+            example: XXX
+          name:
+            type: string
+            description: Racer name
+            example: Name Surname
