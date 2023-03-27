@@ -58,7 +58,6 @@ class Report(Resource):
         #     } for item in race_report
         # ]
         # json_report = json.dumps(dict_report, indent=2)
-        # print(json_report)
         return jsonify(race_report)
 
 
