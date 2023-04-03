@@ -1,23 +1,18 @@
 from app import app
 from flask import render_template, redirect, url_for, request, jsonify
 from report_of_monaco_2018_racing_bydujiy import main as rr
-from flask_restful import Api, Resource
+from flask_restful import Api, Resource, reqparse
 from flasgger import Swagger, swag_from
-import json
+from dict2xml import dict2xml
 
 
 api = Api(app)
 swag = Swagger(app)
 
 
-drive_data, start_data, end_data = rr.read_logs('static/data_files')
+drive_data, start_data, end_data = rr.read_logs('app/static/data_files')
 drivers_list = rr.get_drivers(drive_data)
 race_report = rr.get_report(drive_data, start_data, end_data)
-
-
-@app.route("/")
-def default_route():
-    return redirect(url_for("print_report"))
 
 
 @app.route('/report/', methods=["GET"])
@@ -47,25 +42,32 @@ def driver(driver_id):
 
 
 class Report(Resource):
-    @swag_from('docs/racer_report.yml')
-    def get(self):
-        # dict_report = [
-        #     {
-        #         'abbr': item[0],
-        #         'name': item[1],
-        #         'team': item[2],
-        #         'time': item[3]
-        #     } for item in race_report
-        # ]
-        # json_report = json.dumps(dict_report, indent=2)
-        return jsonify(race_report)
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('format', type=str, choices=['json', 'xml'],
+                                 default='json')
+        self.parser.add_argument('order', type=str, choices=['asc', 'desc'],
+                                 default='asc')
 
-
-class Drivers(Resource):
-    @swag_from('docs/drivers.yml')
+    @swag_from('docs/report.yml')
     def get(self):
-        return jsonify(drivers_list)
+        args = self.parser.parse_args()
+        response_format = args['format']
+        order = args['order']
+        print(response_format, order)
+        report = rr.sort_result(race_report, order)
+        dict_report = [
+            {
+                'abbr': item[0],
+                'name': item[1],
+                'team': item[2],
+                'time': item[3]
+            } for item in report
+        ]
+        if response_format == 'xml':
+            return dict2xml(dict_report, wrap='racers', indent=' ')
+        else:
+            return jsonify(dict_report)
 
 
 api.add_resource(Report, '/api/racer-report')
-api.add_resource(Drivers, '/api/drivers')

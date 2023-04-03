@@ -1,0 +1,64 @@
+summary: Get the Monaco 2018 Racing report
+description: This endpoint returns the racing report for Monaco 2018, including racer abbreviation, name, team, and lap time.
+tags:
+  - Racing Report
+parameters:
+  - name: 'format'
+    in: query
+    description: response_format
+    type: string
+    enum: ['json', 'xml']
+    required: true
+  - name: 'order'
+    in: query
+    type: string
+    enum: ['asc', 'desc']
+    required: true
+responses:
+  '200':
+    description: A list of racers and their report data
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              abbr:
+                type: string
+                description: Racer abbreviation
+                example: DRR
+              name:
+                type: string
+                description: Racer name
+                example: Daniel Ricciardo
+              team:
+                type: string
+                description: Racer team
+                example: RED BULL RACING TAG HEUER
+              time:
+                type: string
+                description: Lap time
+                example: '02:47.987'
+      application/xml:
+        schema:
+          type: string
+          tems:
+            type: object
+            properties:
+              abbr:
+                type: string
+                description: Racer abbreviation
+                example: DRR
+              name:
+                type: string
+                description: Racer name
+                example: Daniel Ricciardo
+              team:
+                type: string
+                description: Racer team
+                example: RED BULL RACING TAG HEUER
+              time:
+                type: string
+                description: Lap time
+                example: '02:47.987'
