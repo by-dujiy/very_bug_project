@@ -16,21 +16,21 @@ race_report = rr.get_report(drive_data, start_data, end_data)
 
 
 @app.route('/report/', methods=["GET"])
-def print_report():
+def report_result():
     order = request.args.get('order')
     report = rr.sort_result(race_report, order)
     return render_template('report/report.html', report=report)
 
 
 @app.route('/report/drivers/', methods=["GET", "POST"])
-def print_drivers():
+def drivers_info():
     order = request.args.get('order')
     drivers = rr.sort_result(drivers_list, order)
     return render_template('report/drivers.html', drivers=drivers)
 
 
-@app.route('/print_driver')
-def print_driver():
+@app.route('/driver_result')
+def driver_result():
     driver_id = request.args.get('driver_id')
     return redirect(url_for('driver', driver_id=driver_id))
 
@@ -44,8 +44,8 @@ def driver(driver_id):
 class Report(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
-        self.parser.add_argument('format', type=str, choices=['json', 'xml'],
-                                 default='json')
+        self.parser.add_argument('format', type=str,
+                                 choices=['json', 'xml'], default='json')
         self.parser.add_argument('order', type=str, choices=['asc', 'desc'],
                                  default='asc')
 
@@ -54,7 +54,6 @@ class Report(Resource):
         args = self.parser.parse_args()
         response_format = args['format']
         order = args['order']
-        print(response_format, order)
         report = rr.sort_result(race_report, order)
         dict_report = [
             {
@@ -70,4 +69,4 @@ class Report(Resource):
             return jsonify(dict_report)
 
 
-api.add_resource(Report, '/api/racer-report')
+api.add_resource(Report, '/api/v1/racer-report')
